@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Positive Shapes & Negative Spaces — Interactive Studio</title>
+<style>
+:root{--ink:#202733;--muted:#596575;--line:#d5dce5;--paper:#fff;--soft:#f1f4f8;--accent:#285d8f;--good:#176b43;--bad:#a33434}
+*{box-sizing:border-box}
+body{margin:0;background:#edf1f5;color:var(--ink);font:16px/1.5 Arial,Helvetica,sans-serif}
+main{max-width:960px;margin:24px auto;padding:0 16px 42px}
+header,.panel{background:var(--paper);border:1px solid var(--line);border-radius:15px;padding:22px;margin-bottom:16px}
+header{border-top:7px solid var(--accent)}
+h1{font-size:clamp(1.8rem,4vw,2.45rem);line-height:1.15;margin:4px 0 10px}
+h2{font-size:1.35rem;margin:0 0 8px}
+h3{font-size:1.05rem;margin:0 0 8px}
+p{margin:7px 0 12px}
+.muted,.hint{color:var(--muted)}
+.tag{display:inline-block;background:#e8eff7;color:#214f7c;padding:4px 10px;border-radius:30px;font-size:.82rem;font-weight:bold;margin:0 6px 8px 0}
+.progress{height:9px;background:#e3e8ee;border-radius:20px;overflow:hidden;margin:12px 0}
+.progress>span{display:block;height:100%;width:0;background:var(--accent);transition:width .2s}
+.task{border:1px solid var(--line);border-radius:12px;padding:15px;margin:13px 0;background:#fff}
+.task-top{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}
+.pill{font-size:.8rem;color:var(--muted);background:var(--soft);padding:4px 9px;border-radius:20px}
+button{font:600 .95rem Arial;border:0;border-radius:9px;padding:10px 14px;cursor:pointer}
+.primary{background:var(--accent);color:white}.secondary{background:#e8edf3;color:var(--ink)}
+button:focus-visible,[draggable=true]:focus-visible{outline:3px solid #79aee2;outline-offset:2px}
+button:disabled{opacity:.5;cursor:not-allowed}
+.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}
+.artboard{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.art-card{border:1px solid var(--line);border-radius:11px;padding:10px;background:#fafbfc}
+svg{width:100%;height:auto;display:block;border:1px solid #d8dde5;border-radius:8px;background:white;touch-action:pan-y}
+.art-label{font-weight:bold;margin:3px 0 7px}
+.zones{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+.zone{border:2px dashed #9aa8b8;border-radius:11px;padding:12px;min-height:112px;background:#f9fafc}
+.zone.over{border-color:var(--accent);background:#edf5fc}
+.zone h3{margin-bottom:6px}
+.zone small{color:var(--muted)}
+.tiles{display:flex;flex-wrap:wrap;gap:9px;margin:12px 0}
+.tile{border:1px solid #9eabb9;background:#fff;border-radius:10px;padding:11px 13px;cursor:grab;user-select:none;min-width:115px;text-align:center;font-weight:600}
+.tile:active{cursor:grabbing}
+.tile.selected{outline:3px solid #79aee2;background:#edf5fc}
+.tile.correct{border-color:#4d9970;background:#eef8f1}
+.tile.incorrect{border-color:#c36a6a;background:#fff1f1}
+.feedback{min-height:24px;font-weight:600;margin-top:8px}
+.good{color:var(--good)}.bad{color:var(--bad)}
+.match-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:center;margin:12px 0}
+.match-row select, input[type=text]{width:100%;padding:10px;border:1px solid #aeb8c5;border-radius:8px;font:inherit;background:white}
+.scorebox{background:#f1f5f9;border-radius:12px;padding:16px;margin-top:14px}
+.bigscore{font-size:2rem;font-weight:800}
+label{font-weight:600}
+textarea{display:block;width:100%;min-height:85px;padding:10px;border:1px solid #aeb8c5;border-radius:9px;font:inherit;margin-top:7px}
+footer{text-align:center;color:var(--muted);font-size:.85rem;padding:12px}
+@media(max-width:650px){main{margin:10px auto}.artboard,.zones{grid-template-columns:1fr}.match-row{grid-template-columns:1fr}.panel,header{padding:16px}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+</style>
+</head>
+<body>
+<main>
+<header>
+<span class="tag">Interactive art studio</span><span class="tag">Grades 9–12</span>
+<h1>Positive Shapes &amp; Negative Spaces</h1>
+<p>Look closely, make choices, and test your understanding. In this activity, you will sort, identify, and match the occupied shapes and open spaces that artists use to build a composition.</p>
+<p><strong>Remember:</strong> A positive shape is the subject or form. Negative space is the open area around, between, or inside the subject. Both are important parts of an artwork.</p>
+<label for="student">Student name</label>
+<input id="student" type="text" placeholder="Enter your name">
+<div class="progress"><span id="progressBar"></span></div>
+<div class="muted" id="progressText">Complete the three studio challenges to see your progress.</div>
+</header>
+
+<section class="panel" id="sortSection">
+<div class="task-top"><h2>Challenge 1: Sort the art vocabulary</h2><span class="pill">Drag and drop or tap to select</span></div>
+<p>Move each description into the correct category. On a touchscreen, tap a tile and then tap its destination.</p>
+<div class="tiles" id="sortTiles">
+<div class="tile" draggable="true" tabindex="0" role="button" data-answer="positive">The silhouette of a person</div>
+<div class="tile" draggable="true" tabindex="0" role="button" data-answer="negative">The opening between a person's arm and torso</div>
+<div class="tile" draggable="true" tabindex="0" role="button" data-answer="positive">The trunk and branches of a tree</div>
+<div class="tile" draggable="true" tabindex="0" role="button" data-answer="negative">The sky visible around the tree</div>
+<div class="tile" draggable="true" tabindex="0" role="button" data-answer="positive">The solid shape of a chair seat</div>
+<div class="tile" draggable="true" tabindex="0" role="button" data-answer="negative">The open area between chair legs</div>
+</div>
+<div class="zones">
+<div class="zone" data-zone="positive" tabindex="0"><h3>Positive shapes</h3><small>Drop or place the occupied forms here.</small></div>
+<div class="zone" data-zone="negative" tabindex="0"><h3>Negative spaces</h3><small>Drop or place the open areas here.</small></div>
+</div>
+<div class="feedback" id="sortFeedback" aria-live="polite"></div>
+<div class="actions"><button class="primary" id="checkSort">Check sorting</button><button class="secondary" id="resetSort">Try this challenge again</button></div>
+</section>
+
+<section class="panel" id="identifySection">
+<div class="task-top"><h2>Challenge 2: Identify what you see</h2><span class="pill">Visual observation</span></div>
+<p>Study each composition. Select whether the highlighted area is a positive shape or a negative space.</p>
+<div class="artboard">
+<div class="art-card">
+<div class="art-label">Image A: Geometric forms</div>
+<svg viewBox="0 0 320 205" role="img" aria-label="Black circle, rectangle and triangle on white background">
+<rect width="320" height="205" fill="#fff"/>
+<circle cx="75" cy="75" r="48" fill="#111"/>
+<rect x="164" y="25" width="100" height="82" fill="#111"/>
+<path d="M45 185 L112 111 L179 185Z" fill="#111"/>
+<path d="M226 144 L284 144 L284 188 L226 188Z" fill="#111"/>
+<path d="M122 30 L151 30 L151 85 L122 85Z" fill="none" stroke="#2683c6" stroke-width="4" stroke-dasharray="6 4"/>
+</svg>
+<p><strong>Highlighted area:</strong> The outlined open region between the black shapes.</p>
+<div class="actions"><button class="secondary identify" data-correct="negative" data-feedback="identifyA">Negative space</button><button class="secondary identify" data-correct="positive" data-feedback="identifyA">Positive shape</button></div>
+<div class="feedback" id="identifyA" aria-live="polite"></div>
+</div>
+<div class="art-card">
+<div class="art-label">Image B: Tree silhouette</div>
+<svg viewBox="0 0 320 205" role="img" aria-label="Black tree silhouette against a white background">
+<rect width="320" height="205" fill="#fff"/>
+<path d="M145 204 L177 204 L169 132 L205 98 L194 87 L164 116 L158 72 L188 42 L176 31 L153 58 L145 12 L133 12 L137 66 L110 39 L100 50 L139 91 L136 132 L104 103 L95 114 L139 151Z" fill="#111"/>
+<path d="M177 204 L190 204 L185 163 L216 137 L207 127 L183 150Z" fill="#111"/>
+<path d="M151 77 L163 77 L166 99 L151 99Z" fill="none" stroke="#2683c6" stroke-width="4" stroke-dasharray="5 4"/>
+</svg>
+<p><strong>Highlighted area:</strong> The outlined open gap between the branches.</p>
+<div class="actions"><button class="secondary identify" data-correct="negative" data-feedback="identifyB">Negative space</button><button class="secondary identify" data-correct="positive" data-feedback="identifyB">Positive shape</button></div>
+<div class="feedback" id="identifyB" aria-live="polite"></div>
+</div>
+</div>
+</section>
+
+<section class="panel" id="matchSection">
+<div class="task-top"><h2>Challenge 3: Match the concept to its role</h2><span class="pill">Apply the vocabulary</span></div>
+<p>Choose the best term for each description.</p>
+<div class="match-row"><div>1. The actual object or form that occupies space in an artwork.</div><select data-match="positive"><option value="">Choose a term</option><option value="positive">Positive shape</option><option value="negative">Negative space</option></select></div>
+<div class="match-row"><div>2. The open area surrounding or appearing between objects.</div><select data-match="negative"><option value="">Choose a term</option><option value="positive">Positive shape</option><option value="negative">Negative space</option></select></div>
+<div class="match-row"><div>3. The empty opening inside the handle of a mug.</div><select data-match="negative"><option value="">Choose a term</option><option value="positive">Positive shape</option><option value="negative">Negative space</option></select></div>
+<div class="match-row"><div>4. The visible silhouette of a bird in a drawing.</div><select data-match="positive"><option value="">Choose a term</option><option value="positive">Positive shape</option><option value="negative">Negative space</option></select></div>
+<div class="actions"><button class="primary" id="checkMatch">Check matches</button><button class="secondary" id="resetMatch">Reset matches</button></div>
+<div class="feedback" id="matchFeedback" aria-live="polite"></div>
+</section>
+
+<section class="panel">
+<div class="task-top"><h2>Studio reflection: Think like an artist</h2><span class="pill">Written response</span></div>
+<label for="reflection">Why is it important for an artist to observe negative spaces instead of drawing only the objects or subjects? Use an example from one of the challenges.</label>
+<textarea id="reflection" placeholder="An artist should observe negative spaces because..."></textarea>
+<label for="application">Name one subject you could draw in class. Describe one positive shape and two negative spaces you would look for.</label>
+<textarea id="application" placeholder="My subject could be..."></textarea>
+</section>
+
+<section class="panel">
+<h2>Your studio results</h2>
+<p class="muted">Your score updates as you complete and check the challenges.</p>
+<div class="scorebox" aria-live="polite">
+<div class="bigscore" id="totalScore">0 / 14</div>
+<div id="scoreMessage">Begin with Challenge 1.</div>
+</div>
+<div class="actions">
+<button class="primary" id="download">Download my responses</button>
+<button class="secondary" onclick="window.print()">Print activity</button>
+</div>
+<p class="hint">Download your responses when finished. Submit the downloaded file through Google Classroom if your teacher requests it. Your teacher may also ask you to submit a photograph of a related drawing.</p>
+</section>
+<footer>Art class • Positive Shapes &amp; Negative Spaces</footer>
+</main>
+<script>
+let sortScore=0,identifyScore=0,matchScore=0,sortChecked=false,matchChecked=false;
+let selectedTile=null;
+const tiles=[...document.querySelectorAll('.tile')],zones=[...document.querySelectorAll('.zone')];
+function updateScore(){
+ const total=sortScore+identifyScore+matchScore;
+ document.getElementById('totalScore').textContent=total+' / 14';
+ const done=(sortChecked?1:0)+(identifyScore===2?1:0)+(matchChecked?1:0);
+ document.getElementById('progressBar').style.width=(done/3*100)+'%';
+ document.getElementById('progressText').textContent=done+' of 3 challenges checked';
+ document.getElementById('scoreMessage').textContent=done===3?'All challenges checked! Review your written reflections before submitting.': 'Keep going — complete and check each challenge.';
+}
+function placeTile(tile,zone){
+ if(!tile||!zone)return;
+ zone.appendChild(tile);tile.classList.remove('selected','correct','incorrect');selectedTile=null;
+}
+tiles.forEach(tile=>{
+ tile.addEventListener('dragstart',e=>{e.dataTransfer.setData('text/plain',tiles.indexOf(tile));});
+ tile.addEventListener('click',()=>{
+  if(selectedTile===tile){tile.classList.remove('selected');selectedTile=null;return;}
+  tiles.forEach(t=>t.classList.remove('selected'));selectedTile=tile;tile.classList.add('selected');
+ });
+ tile.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();tile.click();}});
+});
+zones.forEach(zone=>{
+ zone.addEventListener('dragover',e=>{e.preventDefault();zone.classList.add('over');});
+ zone.addEventListener('dragleave',()=>zone.classList.remove('over'));
+ zone.addEventListener('drop',e=>{e.preventDefault();zone.classList.remove('over');const i=Number(e.dataTransfer.getData('text/plain'));placeTile(tiles[i],zone);});
+ zone.addEventListener('click',()=>{if(selectedTile)placeTile(selectedTile,zone);});
+ zone.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&selectedTile){e.preventDefault();placeTile(selectedTile,zone);}});
+});
+document.getElementById('checkSort').addEventListener('click',()=>{
+ sortScore=0;let placed=0;
+ zones.forEach(zone=>[...zone.querySelectorAll('.tile')].forEach(tile=>{
+  placed++;const ok=tile.dataset.answer===zone.dataset.zone;
+  tile.classList.toggle('correct',ok);tile.classList.toggle('incorrect',!ok);if(ok)sortScore++;
+ }));
+ sortChecked=true;
+ document.getElementById('sortFeedback').textContent=placed<6?'Place all six cards into a category before checking.':`You sorted ${sortScore} of 6 cards correctly. ${sortScore===6?'Excellent observation!':'Review the definitions and try moving any incorrect cards.'}`;
+ document.getElementById('sortFeedback').className='feedback '+(sortScore===6?'good':'bad');
+ updateScore();
+});
+document.getElementById('resetSort').addEventListener('click',()=>{
+ const tray=document.getElementById('sortTiles');tiles.forEach(t=>{tray.appendChild(t);t.classList.remove('correct','incorrect','selected');});sortScore=0;sortChecked=false;document.getElementById('sortFeedback').textContent='';updateScore();
+});
+document.querySelectorAll('.identify').forEach(btn=>btn.addEventListener('click',()=>{
+ const id=btn.dataset.feedback,buttons=[...btn.parentElement.querySelectorAll('button')];
+ buttons.forEach(b=>b.disabled=true);
+ const correct=btn.dataset.correct;
+ if(btn.textContent.trim().toLowerCase()===correct){
+  btn.classList.add('primary');document.getElementById(id).textContent='Correct! You identified the open area as negative space.';document.getElementById(id).className='feedback good';
+ }else{
+  btn.classList.add('secondary');document.getElementById(id).textContent='Not quite. Look for whether the outlined area is an object or an open gap.';document.getElementById(id).className='feedback bad';
+ }
+ identifyScore=[...document.querySelectorAll('.identify.primary')].length;
+ updateScore();
+}));
+document.getElementById('checkMatch').addEventListener('click',()=>{
+ let correct=0,filled=0;
+ document.querySelectorAll('[data-match]').forEach(s=>{if(s.value)filled++;if(s.value===s.dataset.match)correct++;});
+ matchScore=correct;matchChecked=true;
+ document.getElementById('matchFeedback').textContent=filled<4?`You selected ${filled} of 4. Complete all matches, then check again.`:`You matched ${correct} of 4 correctly. ${correct===4?'Great work!':'Review the definitions and try again.'}`;
+ document.getElementById('matchFeedback').className='feedback '+(correct===4?'good':'bad');updateScore();
+});
+document.getElementById('resetMatch').addEventListener('click',()=>{
+ document.querySelectorAll('[data-match]').forEach(s=>s.value='');matchScore=0;matchChecked=false;document.getElementById('matchFeedback').textContent='';updateScore();
+});
+document.getElementById('download').addEventListener('click',()=>{
+ let out='POSITIVE SHAPES & NEGATIVE SPACES — INTERACTIVE STUDIO\n';
+ out+='Student: '+(document.getElementById('student').value||'Not entered')+'\n\n';
+ out+='CHALLENGE 1 — SORTING\n';
+ zones.forEach(z=>{out+=z.querySelector('h3').textContent+':\n';[...z.querySelectorAll('.tile')].forEach(t=>out+='- '+t.textContent+'\n');});
+ out+='\nCHALLENGE 2 — IDENTIFICATION\n';
+ ['identifyA','identifyB'].forEach((id,i)=>out+=`Image ${i===0?'A':'B'}: `+(document.getElementById(id).textContent||'Not answered')+'\n');
+ out+='\nCHALLENGE 3 — MATCHING\n';
+ document.querySelectorAll('[data-match]').forEach((s,i)=>out+=`${i+1}. ${s.options[s.selectedIndex].text}\n`);
+ out+='\nSTUDIO REFLECTION\n'+document.getElementById('reflection').value+'\n\nDRAWING APPLICATION\n'+document.getElementById('application').value+'\n\nSCORE: '+document.getElementById('totalScore').textContent+'\n';
+ const blob=new Blob([out],{type:'text/plain;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');
+ a.href=url;a.download='Positive-Negative-Space-Interactive-Studio.txt';document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
+});
+updateScore();
+</script>
+</body>
+</html>
